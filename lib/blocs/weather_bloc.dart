@@ -1,15 +1,29 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
+import 'package:cloud_warn/repos/weather_repository.dart';
 import 'package:meta/meta.dart';
+import 'package:cloud_warn/models/weather_model.dart';
 
 part 'weather_event.dart';
 part 'weather_state.dart';
 
 class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   WeatherBloc() : super(WeatherInitial()) {
-    on<WeatherEvent>((event, emit) {
-      // TODO: implement event handler
+    on<CurrentCityInputted>((event, emit) async {
+      emit(CurrentWeatherLoading());
+
+      WeatherRepository repo = WeatherRepository();
+      WeatherModel? weatherModel =
+          await repo.fetchWeather(forCity: event.currentCity);
+
+      if (weatherModel != null) {
+        emit(CurrentWeatherLoaded(weatherModel));
+      } else {
+        emit(WeatherLoadError('Weather failed to load'));
+      }
     });
   }
 }
+
+// basic logic component - is a box that takes an event and turns it into a state
+// how it does this

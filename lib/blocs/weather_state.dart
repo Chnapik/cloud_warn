@@ -7,8 +7,8 @@ class WeatherInitial extends WeatherState {}
 class CurrentWeatherLoading extends WeatherState {}
 
 class CurrentWeatherLoaded extends WeatherState {
-  final Weather;
-  CurrentWeatherLoaded(this.Weather);
+  final WeatherModel weatherModel;
+  CurrentWeatherLoaded(this.weatherModel);
 }
 
 class WeatherLoadError extends WeatherState {
