@@ -1,62 +1,78 @@
 import 'package:cloud_warn/blocs/weather_bloc.dart';
+import 'package:cloud_warn/models/weather_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class WeatherInitialView extends StatelessWidget {
-  const WeatherInitialView({Key? key, required this.buildContext})
-      : super(key: key);
+class WeatherView extends StatefulWidget {
+  WeatherView({Key? key, required this.state}) : super(key: key);
 
-  final BuildContext buildContext;
+  final WeatherState state;
+
+  @override
+  State<WeatherView> createState() => _WeatherViewState();
+}
+
+class _WeatherViewState extends State<WeatherView> {
+  String searchCity = "";
+  TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     WeatherBloc bloc = BlocProvider.of<WeatherBloc>(context);
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
         children: [
-          const TextField(
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(
-              labelText: 'Enter a City',
-            ),
-          ),
-          const SizedBox(height: 20.0),
-          ElevatedButton(
-            child: const Text('Search'),
-            onPressed: () {
-              bloc.add(CurrentCityInputted('London'));
-            },
+          if (widget.state is CurrentWeatherLoading)
+            Center(
+                child: Container(
+              child: const CircularProgressIndicator(
+                color: Colors.red,
+              ),
+              width: 80,
+              height: 80,
+            )),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ..._buildWeatherData(widget.state),
+              TextField(
+                controller: controller,
+                keyboardType: TextInputType.text,
+                onChanged: (val) {
+                  setState(() {
+                    searchCity = val;
+                  });
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Enter a City',
+                ),
+              ),
+              const SizedBox(height: 20.0),
+              ElevatedButton(
+                child: const Text('Search'),
+                onPressed: () {
+                  print(searchCity);
+                  bloc.add(CurrentCityInputted(searchCity));
+                },
+              ),
+            ],
           ),
         ],
       ),
     );
   }
-}
 
-class CurrentWeatherLoadingView extends StatelessWidget {
-  const CurrentWeatherLoadingView({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class CurrentWeatherLoadedView extends StatelessWidget {
-  const CurrentWeatherLoadedView({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-class WeatherLoadErrorView extends StatelessWidget {
-  const WeatherLoadErrorView({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+  List<Widget> _buildWeatherData(WeatherState state) {
+    WeatherModel model;
+    if (state is CurrentWeatherLoaded) {
+      model = state.weatherModel;
+      return [
+        Text(model.city),
+        Text(model.weatherDescription),
+        Text(model.mainWeather.temp.toString())
+      ];
+    } else {
+      return [];
+    }
   }
 }

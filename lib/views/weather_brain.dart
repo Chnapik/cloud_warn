@@ -13,15 +13,7 @@ class WeatherBrain extends StatelessWidget {
           create: (context) => WeatherBloc(),
           child: BlocBuilder<WeatherBloc, WeatherState>(
               builder: (blocContext, state) {
-            if (state is WeatherInitial) {
-              return WeatherInitialView(buildContext: blocContext);
-            } else if (state is CurrentWeatherLoading) {
-              return Container();
-            } else if (state is CurrentWeatherLoaded) {
-              return Container();
-            } else {
-              return Container();
-            }
+            return WeatherView(state: state);
           })),
     );
   }
