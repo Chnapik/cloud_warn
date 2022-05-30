@@ -14,7 +14,7 @@ class WeatherRepository {
       var coordinates = Coordinates.fromJson(data['coord']);
       var mainWeather = MainWeather.fromJson(data['main']);
       var city = data['name'];
-      var weatherDescription = data['description'];
+      var weatherDescription = data['weather'][0]['description'];
       return WeatherModel(coordinates, mainWeather, city, weatherDescription);
     } else {
       // If the server did not return a 200 OK response,

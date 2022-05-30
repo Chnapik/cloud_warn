@@ -8,6 +8,14 @@ part 'weather_event.dart';
 part 'weather_state.dart';
 
 class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
+  @override
+  onTransition(Transition<WeatherEvent, WeatherState> transition) {
+    super.onTransition(transition);
+    print(transition.event);
+    print(transition.currentState);
+    print(transition.nextState);
+  }
+
   WeatherBloc() : super(WeatherInitial()) {
     on<CurrentCityInputted>((event, emit) async {
       emit(CurrentWeatherLoading());
