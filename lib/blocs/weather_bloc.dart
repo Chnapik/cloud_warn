@@ -24,6 +24,3 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
     });
   }
 }
-
-// basic logic component - is a box that takes an event and turns it into a state
-// how it does this
